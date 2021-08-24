@@ -4,7 +4,7 @@
     public class Student
     {
         public int studentNumber;
-        public string gender;
+        private string _gender;
 
         public string FirstName { get; set; }
         public string Surname { get; set; }
@@ -13,7 +13,7 @@
 
         public Student Get() => new Student()
         {
-            gender = "male",
+            _gender = "male",
             studentNumber = 1234,
             FirstName = "Ivan",
             Surname = "Ivanov",

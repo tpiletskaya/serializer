@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Otus_hw_serializer
@@ -8,6 +9,8 @@ namespace Otus_hw_serializer
     {
         private const string Separator = ",";
         private const string RowEnd = "\n";
+
+        private static BindingFlags _bindingFlags => BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
         public static string Serialize(object obj)
         {
@@ -18,8 +21,8 @@ namespace Otus_hw_serializer
 
             if (type.Namespace.StartsWith("System")) return obj.ToString();
 
-            var fields = type.GetFields();
-            var properties = type.GetProperties();
+            var fields = type.GetFields(_bindingFlags);
+            var properties = type.GetProperties(_bindingFlags);
 
             var header = new StringBuilder();
             var values = new StringBuilder();
@@ -59,18 +62,18 @@ namespace Otus_hw_serializer
             var columns = rows[0].Split(Separator);
             var values = rows[1].Split(Separator);
 
-            var fieldsCount = type.GetFields().Length;
+            var fieldsCount = type.GetFields(_bindingFlags).Length;
 
             for (int i = 0; i < fieldsCount; i++)
             {
-                var field = type.GetField(columns[i]);
+                var field = type.GetField(columns[i], _bindingFlags);
                 var fieldType = field.FieldType;
                 field.SetValue(entity, Convert.ChangeType(values[i], fieldType));
             }
 
             for (int i = fieldsCount; i < columns.Length; i++)
             {
-                var property = type.GetProperty(columns[i]);
+                var property = type.GetProperty(columns[i], _bindingFlags);
                 var propertyType = property.PropertyType;
                 property.SetValue(entity, Convert.ChangeType(values[i], propertyType));
             }
