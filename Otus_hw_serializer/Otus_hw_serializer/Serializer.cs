@@ -11,6 +11,9 @@ namespace Otus_hw_serializer
 
         public static string Serialize(object obj)
         {
+            if (obj == null)
+                throw new ArgumentNullException("Input object should be not null");
+
             var type = obj.GetType();
 
             if (type.Namespace.StartsWith("System")) return obj.ToString();
