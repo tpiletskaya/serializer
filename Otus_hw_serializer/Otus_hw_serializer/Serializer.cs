@@ -53,11 +53,16 @@ namespace Otus_hw_serializer
 
         public static TType Deserialize<TType>(string csv) where TType : class
         {
+            if (string.IsNullOrWhiteSpace(csv)) return null;
+
             var type = typeof(TType);
 
             var entity = Activator.CreateInstance<TType>();
 
             var rows = csv.Split(RowEnd);
+
+            if(rows.Length != 2)
+                throw new ArgumentNullException("Csv string should contain 2 rows");
 
             var columns = rows[0].Split(Separator);
             var values = rows[1].Split(Separator);
